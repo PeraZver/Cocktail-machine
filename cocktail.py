@@ -1,5 +1,3 @@
-# USAGE
-# python real_time_object_detection.py --prototxt MobileNetSSD_deploy.prototxt.txt --model MobileNetSSD_deploy.caffemodel
 
 # import the necessary packages
 from imutils.video import VideoStream
@@ -86,7 +84,6 @@ while True:
 	#if person is not detected proceed with detection algorithm
 	if ((time.time()- person_detected) > 5):
 
-		cv2.destroyWindow('reklama') # destroy window with reklama
 		print("Going to detection mode")
 		# grab the frame dimensions and convert it to a blob
 		(h, w) = frame.shape[:2]
@@ -106,7 +103,7 @@ while True:
 		personCtr = np.where(personConfidence > 0.75)[0].size	# return how many confidences are higher than 80%
 		print("pretty sure about " + str(personCtr) + " people")
 		person_detected = time.time() if personCtr > 0 else 0
-		#Display the add, if there's
+		# Make a cocktail
 		ShowAdd(personCtr)
 
 
