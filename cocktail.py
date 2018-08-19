@@ -11,19 +11,21 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from hx711 import HX711
+from pumpe import Pumpa
 
 ####################################
 # Setting up scale
 
-def cleanAndExit():
-    print ("Cleaning...")
-    GPIO.cleanup()
-    print ("Bye!")
-    sys.exit()
-
 hx = HX711(5, 6)
 hx.set_reading_format("LSB", "MSB")
 hx.set_reference_unit(99.43)
+
+###################################
+# Setting up pumps
+
+p1 = Pumpa(21, 'Rum')
+p2 = Pumpa(20, 'Coke')
+p3 = Pumpa(16, 'Lime')
 
 ###################################
 # Setting up SSD detector
@@ -54,16 +56,26 @@ personCtr = 0
 
 def MakeACocktail(personCtr):
 	""" Make a cocktail depending on number of persons detected. """
-	if (personCtr):
+	TIMEOUT = 15 		#if cocktail isn't done in this time, break the operation
+	COCKTAIL_SIZE = 300
+	
+	if (not personCtr):
 		print (str(personCtr) + " persons detected!")
-		print ("Giving you 3 sec to put a glass in the machine")
+		print ("[INFO] Giving you 3 sec to put a glass in the machine ...")
 		time.sleep(3)
+		
 		# Reset the scale
 		hx.reset()
 		hx.tare()
+		current_amount = 0
 		start_time = time.time()
-		while (hx.get_weight(5) < 100 and (time.time() - start_time) < 5):
-			print ("Weight: ", hx.get_weight(5), " g")
+		
+		# Turn on the pumps
+		p1.turnon()
+		while (current_amount < p1.amount and (time.time() - start_time) < TIMEOUT):
+			print ("[INFO] Weight: ", current_amount, " g")
+			current_amount += hx.get_weight(5)
+		p1.turnoff()	
 		hx.power_down()
 	
 # loop over the frames from the video stream
@@ -111,7 +123,11 @@ while True:
 		fps.update()
 
 	except (KeyboardInterrupt, SystemExit):
-		cleanAndExit()
+		print ("Cleaning...")
+		GPIO.cleanup()
+		print ("Bye!")
+		sys.exit()
+
 
 # stop the timer and display FPS information
 fps.stop()

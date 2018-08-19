@@ -111,7 +111,7 @@ class HX711:
 
     def read_long(self):
         np_arr8 = self.read_np_arr8()
-        np_arr32 = np_arr8.view('uint32')
+        np_arr32 = np_arr8.view('int32')
         self.lastVal = np_arr32
 
         return (self.lastVal)
