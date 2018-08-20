@@ -8,7 +8,6 @@ import imutils
 import time
 import cv2
 import RPi.GPIO as GPIO
-import time
 import sys
 from hx711 import HX711
 from pumpe import Pumpa
@@ -26,6 +25,7 @@ hx.set_reference_unit(99.43)
 p1 = Pumpa(21, 'Rum')
 p2 = Pumpa(20, 'Coke')
 p3 = Pumpa(16, 'Lime')
+pumps = [p1, p2, p3]
 
 ###################################
 # Setting up SSD detector
@@ -59,7 +59,7 @@ def MakeACocktail(personCtr):
 	TIMEOUT = 15 		#if cocktail isn't done in this time, break the operation
 	COCKTAIL_SIZE = 300
 	
-	if (not personCtr):
+	if (personCtr):
 		print (str(personCtr) + " persons detected!")
 		print ("[INFO] Giving you 3 sec to put a glass in the machine ...")
 		time.sleep(3)
@@ -70,13 +70,23 @@ def MakeACocktail(personCtr):
 		current_amount = 0
 		start_time = time.time()
 		
-		# Turn on the pumps
-		p1.turnon()
-		while (current_amount < p1.amount and (time.time() - start_time) < TIMEOUT):
-			print ("[INFO] Weight: ", current_amount, " g")
-			current_amount += hx.get_weight(5)
+	# Turn on the pumps
+	for pump in pumps:
+		# Reset the scale
+		hx.reset()
+		hx.tare()
+		current_amount = 0
+		start_time = time.time()
+		pump.turnon()
+		print ("[INFO] Sipping " + pump.drink)
+		while (  (current_amount < pump.amount) and (  (time.time() - start_time) < TIMEOUT  )  ):
+			print ("[INFO] Weight: "+str(current_amount)+" g. Total weight: "
+				+str(current_amount + cocktail_amount) + " g.")
+			current_amount = hx.get_weight(5)	
+		cocktail_amount += current_amount	
 		p1.turnoff()	
-		hx.power_down()
+		
+	hx.power_down()
 	
 # loop over the frames from the video stream
 while True:

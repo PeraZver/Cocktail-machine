@@ -3,3 +3,4 @@ MobileNetSSD_deploy.prototxt.txt
 __pycache__
 example.py
 *.pyc
+pump_test.py
