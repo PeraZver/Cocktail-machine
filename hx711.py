@@ -168,6 +168,8 @@ class HX711:
     # I used 100 microseconds, just in case.
     # I've found it is good practice to reset the hx711 if it wasn't used for more than a few seconds.
     def power_down(self):
+        GPIO.setmode(GPIO.BCM)        
+        GPIO.setup(self.PD_SCK, GPIO.OUT)
         GPIO.output(self.PD_SCK, False)
         GPIO.output(self.PD_SCK, True)
         time.sleep(0.0001)
