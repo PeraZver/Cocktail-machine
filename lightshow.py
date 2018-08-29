@@ -12,7 +12,7 @@ if __name__ == '__main__':
 			if (f.readline() == 'Detected\0'):
 				led.breathe()
 			else:
-				led.tail(tail_length=1)
+				led.tail(tail_length=5)
 			f.close()
 
     except KeyboardInterrupt:

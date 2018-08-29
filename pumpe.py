@@ -3,11 +3,11 @@ import RPi.GPIO as GPIO
 
 class Pumpa: 
 	drink_amounts = {
-		'Rum': 100,
-		'Coke': 200,
-		'Lime': 50,
-		'Gin' : 100,
-		'Tonic' : 200 }		
+		'Rum': 10,
+		'Coke': 20,
+		'Lime': 5,
+		'Gin' : 10,
+		'Tonic' : 20 }		
 	
 	def __init__(self, pin, drink):
 		self.pin = pin

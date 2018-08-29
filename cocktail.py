@@ -11,7 +11,7 @@ from CV_stuff import *
 
 hx = HX711(5, 6)
 hx.set_reading_format("LSB", "MSB")
-hx.set_reference_unit(99.85)
+hx.set_reference_unit(-99.71)
 
 ###################################
 # Setting up pumps
@@ -23,13 +23,19 @@ pumps = [p1, p2, p3]
 for pump in pumps:   # make sure all are turned off!!!
 	pump.turnoff()
 
+###################################
+# Interface to RGB LED Ring
+statusfile = "status.txt"
 
 def MakeACocktail(personCtr):
 	""" Make a cocktail depending on number of persons detected. """
-	TIMEOUT = 15 		#if cocktail isn't done in this time, break the operation
-	COCKTAIL_SIZE = 300
+	TIMEOUT = 100 		#if cocktail isn't done in this time, break the operation
+	COCKTAIL_SIZE_MAX = 300
+	f = open(statusfile, 'w')
 	
-	if (not personCtr):
+	if (personCtr):
+		f.write('Detected\0')
+		f.close()
 		print (str(personCtr) + " persons detected!")
 		print ("[INFO] Giving you 3 sec to put a glass in the machine ...")
 		time.sleep(3)
@@ -43,16 +49,27 @@ def MakeACocktail(personCtr):
 			current_amount = 0
 			start_time = time.time()
 			pump.turnon()
-			print ("[INFO] Sipping " + pump.drink)
-			while (  (current_amount < pump.amount) and (  (time.time() - start_time) < TIMEOUT  )  ):
+	
+			print ("[INFO] Sipping %s. Required %d ml." % (pump.drink, pump.amount))
+		
+			while (  (current_amount < pump.amount) and 
+				( (current_amount + cocktail_amount) < COCKTAIL_SIZE_MAX) and
+				(  (time.time() - start_time) < TIMEOUT  )  ):
+			
 				current_amount = hx.get_weight(5)
-				print ("[INFO] Weight: "+str(current_amount)+" g. Total weight: "
-					+str(current_amount + cocktail_amount) + " g.")
+				tot_amount = (current_amount + cocktail_amount)
+		
+				print ("[INFO] %s : %.1f ml. Total: %.1f ml. Cocktail %d %% done."  
+					% (pump.drink, current_amount, tot_amount, int(tot_amount/(p1.amount + p2.amount + p3.amount)*100)))
 	
 			pump.turnoff()	
 			cocktail_amount += current_amount	
 			
 		hx.power_down()
+	
+	else:
+		f.write('\0')
+		f.close()
 		
 # loop over the frames from the video stream
 while True:
@@ -73,8 +90,10 @@ while True:
 		# update the FPS counter
 
 
-	except (KeyboardInterrupt, SystemExit):
+	except (KeyboardInterrupt, SystemExit, RuntimeError, TypeError, NameError):
 		print ("Cleaning...")
+		for pump in pumps:
+			pump.turnoff()
 		GPIO.cleanup()
 		CV_Cleanup()
 		hx.power_down()
