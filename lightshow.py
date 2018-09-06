@@ -9,11 +9,15 @@ if __name__ == '__main__':
     try:
         while True:
 			f = open("status.txt", 'r')
-			if (f.readline() == 'Detected\0'):
+			msg = f.readline()
+			if (msg == 'Detected\0'):
 				led.breathe()
+			elif (msg == 'Wait\0'):
+				led.breathe_wait()
 			else:
 				led.tail(tail_length=5)
 			f.close()
+			#time.sleep(1)
 
     except KeyboardInterrupt:
         led.cleanup()

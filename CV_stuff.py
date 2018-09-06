@@ -52,14 +52,14 @@ def CV_Detect():
 		# predictions
 		net.setInput(blob)
 		detections = net.forward()
-		print("Detected "+str(detections.shape[2])+" objects")
+		print("Detected %d objects." % detections.shape[2])
 		# find people with more than 75% confidence
 		personIdx = np.where(detections[0,0,:,1] == CLASSES.index("person")) # check how many detections are people
-		print("Detected " + str(personIdx[0].size)+" persons")
+		print("Detected %d persons." % personIdx[0].size)
 		personConfidence = detections[0,0,personIdx[0],2] # find their confidences
-		print("Confidence: " + str(personConfidence))
+		#print("Confidence: %.2f %%" % max(personConfidence))
 		personCtr = np.where(personConfidence > 0.75)[0].size	# return how many confidences are higher than 80%
-		print("pretty sure about " + str(personCtr) + " people")
+		print("Pretty sure about %d people" % personCtr)
 		person_detected = time.time() if personCtr > 0 else 0
 		
 	return (personCtr)

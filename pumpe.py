@@ -7,7 +7,9 @@ class Pumpa:
 		'Coke': 20,
 		'Lime': 5,
 		'Gin' : 10,
-		'Tonic' : 20 }		
+		'Tonic' : 20,
+		'Beer' : 100, 
+		'No' : 0 }		
 	
 	def __init__(self, pin, drink):
 		self.pin = pin

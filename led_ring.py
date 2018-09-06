@@ -47,7 +47,20 @@ class LED_RING:
 			self.strip.setBrightness(i)
 			self.strip.show()
 			time.sleep(wait_ms/1000.0)
-	
+
+	def breathe_wait(self, min_light=50, max_light=150, wait_ms=5):
+		"""WTF ne radis """
+		self.colorWipe(Color(10, 10, 0))
+		for i in range(min_light, max_light, 1):
+			self.strip.setBrightness(i)
+			self.strip.show()
+			time.sleep(wait_ms/1000.0)
+			
+		for i in range(max_light, min_light, -1):
+			self.strip.setBrightness(i)
+			self.strip.show()
+			time.sleep(wait_ms/1000.0)	
+
 	def cleanup(self):
 		self.colorWipe(0)
 
