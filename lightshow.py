@@ -10,12 +10,25 @@ if __name__ == '__main__':
         while True:
 			f = open("status.txt", 'r')
 			msg = f.readline()
+			print (msg)
+			
 			if (msg == 'Detected\0'):
 				led.breathe()
+				
 			elif (msg == 'Wait\0'):
 				led.breathe_wait()
-			else:
+				
+			elif (msg == 'Percentage\n'):
+				percent = int(f.readline().strip('\0'))
+				print(percent)
+				led.percentage(percent)
+				
+			elif (msg == 'Idle\0'):
 				led.tail(tail_length=5)
+			
+			else:
+				led.cleanup()
+				
 			f.close()
 			#time.sleep(1)
 

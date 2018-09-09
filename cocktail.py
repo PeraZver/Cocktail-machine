@@ -5,7 +5,8 @@ from hx711 import HX711
 from pumpe import Pumpa
 import RPi.GPIO as GPIO
 #from CV_stuff import *
-from DLIB_stuff import *
+#from DLIB_stuff import *
+from NSFW_stuff import *
 
 ####################################
 # Setting up scale
@@ -33,7 +34,7 @@ def MakeACocktail(personCtr):
 	""" Make a cocktail depending on number of persons detected. """
 	TIMEOUT = 100		#if cocktail isn't done in this time, break the operation
 	COCKTAIL_SIZE_MAX = 300
-	SLEEP_TIME = 60
+	SLEEP_TIME = 10
 	
 	if (personCtr):
 		f = open(statusfile, 'w')
@@ -60,9 +61,17 @@ def MakeACocktail(personCtr):
 			
 				current_amount = hx.get_weight(5)
 				tot_amount = current_amount + cocktail_amount
+				cocktail_percent = int(tot_amount/(p1.amount + p2.amount + p3.amount)*100)
 		
 				print ("[INFO] %s : %.1f ml. Total: %.1f ml. Cocktail %d %% done."  
-					% (pump.drink, current_amount, tot_amount, int(tot_amount/(p1.amount + p2.amount + p3.amount)*100)))
+					% (pump.drink, current_amount, tot_amount, cocktail_percent))
+				
+				f = open(statusfile, 'w')
+				f.write('Percentage\n%d\0' % cocktail_percent)
+				#f.write("%d" % cocktail_percent)
+				#f.write("\0")
+				f.close()	
+				
 	
 			pump.turnoff()	
 			cocktail_amount += current_amount	
@@ -78,7 +87,7 @@ def MakeACocktail(personCtr):
 		print("Wait done. Going to detection mode.")
 
 	f = open(statusfile, 'w')
-	f.write('\0')
+	f.write('Idle\0')
 	f.close()
 		
 # loop over the frames from the video stream

@@ -35,7 +35,7 @@ class LED_RING:
 			self.strip.show()
 			time.sleep(wait_ms/1000.0)  
 			
-	def breathe(self, min_light=50, max_light=150, wait_ms=5):
+	def breathe(self, min_light=50, max_light=150, wait_ms=1.5):
 		"""WTF ne radis """
 		self.colorWipe()
 		for i in range(min_light, max_light, 1):
@@ -48,7 +48,7 @@ class LED_RING:
 			self.strip.show()
 			time.sleep(wait_ms/1000.0)
 
-	def breathe_wait(self, min_light=50, max_light=150, wait_ms=5):
+	def breathe_wait(self, min_light=50, max_light=150, wait_ms=1.5):
 		"""WTF ne radis """
 		self.colorWipe(Color(10, 10, 0))
 		for i in range(min_light, max_light, 1):
@@ -60,6 +60,14 @@ class LED_RING:
 			self.strip.setBrightness(i)
 			self.strip.show()
 			time.sleep(wait_ms/1000.0)	
+
+	def percentage(self, percent, color=Color(0, 0, 20), wait_ms=1):
+		#self.cleanup()
+		self.activePixels = int( self.strip.numPixels() * percent / 100 )
+		for i in range(min(self.activePixels, self.strip.numPixels())):
+			self.strip.setPixelColor(i, color)
+			self.strip.show()
+			time.sleep(wait_ms/1000.0)
 
 	def cleanup(self):
 		self.colorWipe(0)
