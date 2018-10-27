@@ -26,10 +26,10 @@ class LED_RING:
 
 	def tail(self, tail_length=2, color=Color(127,127,127), wait_ms=50):
 		"""Buffering animation."""
-		for i in range(self.strip.numPixels() - tail_length/2):
-			for j in range(self.strip.numPixels()):
+		for i in range(self.strip.numPixels() ):
+			for j in range(self.strip.numPixels() + tail_length):
 				if (j in range(i, i + tail_length + 1)):
-					self.strip.setPixelColor(j, color)
+					self.strip.setPixelColor(j%self.strip.numPixels(), color)
 				else:
 					self.strip.setPixelColor(j, 0) 	    					
 			self.strip.show()

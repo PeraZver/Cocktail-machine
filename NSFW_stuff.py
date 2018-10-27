@@ -48,10 +48,7 @@ elif input_type == InputType.BASE64_JPEG:
 	fn_load_image = lambda filename: np.array([base64.urlsafe_b64encode(open(filename, "rb").read())])
 
 sess.run(tf.global_variables_initializer())
-
 print("[INFO] Time of  model upload: {:.2} s".format(time.time() - start_time))
-
-nsfw_detected = -5 # pause time when nsfw is detected
 
 def CV_Detect():
 
