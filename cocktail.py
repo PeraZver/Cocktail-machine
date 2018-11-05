@@ -5,15 +5,15 @@ from hx711 import HX711
 from pumpe import Pumpa
 import RPi.GPIO as GPIO
 #from CV_stuff import *
-#from DLIB_stuff import *
-from NSFW_stuff import *
+from DLIB_stuff import *
+#from NSFW_stuff import *
 
 ####################################
 # Setting up scale
 
 hx = HX711(5, 6)
 hx.set_reading_format("LSB", "MSB")
-hx.set_reference_unit(-99.71)
+hx.set_reference_unit(949.4)
 
 ###################################
 # Setting up pumps
@@ -41,13 +41,14 @@ def MakeACocktail(personCtr):
 		f.write('Detected\0')
 		f.close()
 		print ("[INFO] Giving you 3 sec to put a glass in the machine ...")
+		hx.reset()
 		time.sleep(3)
 		cocktail_amount = 0
 		
 		# Turn on the pumps
 		for pump in pumps:
 			# Reset the scale
-			hx.reset()
+			
 			hx.tare()
 			current_amount, tot_amount = 0, 0
 			start_time = time.time()

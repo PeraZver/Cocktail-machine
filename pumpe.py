@@ -3,9 +3,9 @@ import RPi.GPIO as GPIO
 
 class Pumpa: 
 	drink_amounts = {
-		'Rum': 10,
-		'Coke': 20,
-		'Lime': 5,
+		'Rum': 20,
+		'Coke': 60,
+		'Lime': 20,
 		'Gin' : 10,
 		'Tonic' : 20,
 		'Beer' : 100, 
